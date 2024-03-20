@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
     import WebSocket from 'ws';
 
     let ws: WebSocket;
@@ -36,6 +37,32 @@
             }
         })
     }
+
+    let gp: Gamepad | null;
+
+    onMount(() => {
+        alert('hi')
+        window.addEventListener("gamepadconnected", (e) => {
+            const gamepads = navigator.getGamepads()
+            if (gamepads.length > 0) {
+                gp = gamepads[0];
+            }
+            console.log(
+                "Gamepad connected at index %d: %s. %d buttons, %d axes.",
+                e.gamepad.index,
+                e.gamepad.id,
+                e.gamepad.buttons.length,
+                e.gamepad.axes.length,
+            );
+        });
+
+        setInterval(() => {
+            const gamepads = navigator.getGamepads();
+            if (gamepads.length > 0) {
+                gp = gamepads[0];
+            }
+        }, 50)
+    })
 </script>
 
 <h1>{statusText}</h1>
@@ -45,6 +72,10 @@
 <button on:click={sendHello}>
     Send "hello"
 </button>
-{#each messages as message}
-    <p>message</p>
+<!-- {#each messages as message}
+    <p>{message}</p>
+{/each} -->
+<p>{gp?.connected}</p>
+{#each (gp?.axes || []) as axes}
+    <p>{axes}</p>
 {/each}
