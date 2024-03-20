@@ -79,3 +79,8 @@
 {#each (gp?.axes || []) as axes}
     <p>{axes}</p>
 {/each}
+
+<!DOCTYPE html>
+<html lang="en">
+    
+</html>
