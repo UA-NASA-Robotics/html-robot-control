@@ -3,50 +3,42 @@
 
 	let ws: WebSocket;
 	let address: string = '';
-	let msg: string = '';
 	let statusText: string;
 	let messages: string[] = [];
 	let gp: Gamepad | null;
 
 	async function connect() {
-		statusText = 'connecting to ws://172.28.88.24:9002';
+		statusText = `Connecting to ${address}`;
 		try {
-			ws = await connectToServer();
-			statusText = 'successfully connected';
+			ws = await new Promise((resolve, reject) => {
+				const ws = new WebSocket(address);
+				const timer = setInterval(() => {
+					if (ws.readyState === 1) {
+						clearInterval(timer);
+						resolve(ws);
+					}
+				}, 10);
+			});
+
+			statusText = `Successfully connected to ${address}`;
+
 			ws.onmessage = (e) => {
 				messages.push(e.data.toString());
+			};
+
+			ws.onclose = function (e) {
+				statusText = `Closed connection with ${this.url} because ${e.reason}`;
+			};
+
+			ws.onerror = function (e) {
+				statusText = `Error with ${this.url}`;
 			};
 		} catch (e) {
 			statusText = String(e);
 		}
 	}
 
-	async function connectToServer(): Promise<WebSocket> {
-		const ws = new WebSocket(address);
-		return new Promise((resolve, reject) => {
-			const timer = setInterval(() => {
-				if (ws.readyState === 1) {
-					clearInterval(timer);
-					resolve(ws);
-				}
-			}, 10);
-		});
-	}
-
-	async function sendMsg() {
-		statusText = `Sending "${msg}"`;
-		ws.send(msg);
-		// ws.send(msg, (err) => {
-		// 	if (err) {
-		// 		statusText = err.message;
-		// 	} else {
-		// 		statusText = 'Success';
-		// 	}
-		// });
-	}
-
 	onMount(() => {
-		alert('hi');
 		window.addEventListener('gamepadconnected', (e) => {
 			const gamepads = navigator.getGamepads();
 			if (gamepads.length > 0) {
@@ -70,15 +62,10 @@
 	});
 </script>
 
-<h1>{statusText}</h1>
+<p>{statusText}</p>
 <input bind:value={address} placeholder="Enter address" />
 <button on:click={connect}>
 	Connect to {address}
-</button>
-
-<input bind:value={msg} />
-<button on:click={sendMsg}>
-	Send "{msg}"
 </button>
 <!-- {#each messages as message}
     <p>{message}</p>
