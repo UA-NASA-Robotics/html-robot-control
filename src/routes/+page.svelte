@@ -52,6 +52,7 @@
 
 	async function disconnect() {
 		statusText = 'disconnecting with ' + url;
+		ws.send('stop-listening');
 		ws.close();
 	}
 
@@ -125,7 +126,7 @@
 		if (macroCode < 0) return;
 
 		let byte = 0b1000_0010;
-		byte &= (macroCode << 2) & 0b0111_1100;
+		byte |= (macroCode << 2) & 0b0111_1100;
 
 		ws?.send(new Int8Array([byte]));
 	}
