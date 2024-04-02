@@ -102,6 +102,34 @@
 		}
 	}
 
+	let sentMacros: boolean[] = [];
+	const macroMap = [
+		5, // Dump cycle
+		6 // Dig cycle
+	];
+
+	async function sendMacroPacket(buttons: readonly GamepadButton[]) {
+		let macroCode = -1;
+		for (let i = buttons.length - 1; i >= 0; i--) {
+			if (!buttons[i].pressed) {
+				sentMacros[i] = false;
+				continue;
+			}
+
+			if ((sentMacros.length > i && sentMacros[i]) || macroMap.length <= i) continue;
+
+			macroCode = macroMap[i];
+			sentMacros[i] = true;
+		}
+
+		if (macroCode < 0) return;
+
+		let byte = 0b1000_0010;
+		byte &= (macroCode << 2) & 0b0111_1100;
+
+		ws?.send(new Int8Array([byte]));
+	}
+
 	onMount(() => {
 		window.addEventListener('gamepadconnected', (e) => {
 			const gamepads = navigator.getGamepads();
@@ -126,7 +154,7 @@
 					const right = gp.axes[3];
 					const t = [...gp.buttons.slice(4, 8).map((b) => b.pressed)];
 					sendMotionPacket(left, right, [t[0], t[1], t[2], t[3]]);
-					const doDigCycle = gp.buttons[0].pressed;
+					sendMacroPacket(gp.buttons);
 				}
 			}
 		}, 50);
