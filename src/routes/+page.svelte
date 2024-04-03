@@ -52,7 +52,6 @@
 
 	async function disconnect() {
 		statusText = 'disconnecting with ' + url;
-		ws.send('stop-listening');
 		ws.close();
 	}
 
