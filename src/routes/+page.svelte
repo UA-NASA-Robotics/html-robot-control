@@ -184,3 +184,6 @@
 {#each gp?.buttons || [] as button, index}
 	<p>{index} {button.pressed} {button.touched} {button.value}</p>
 {/each}
+
+<style>
+</style>
