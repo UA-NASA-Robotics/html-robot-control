@@ -7,6 +7,9 @@
     <div class="joystick">
         <div class="joystick-thumb" style="transform: translate(-50%, calc({yAxis} * 25px - 50%));"></div>
     </div>
+    <div class="joystick">
+        <div class="joystick-thumb" style="transform: translate(-50%, calc({yAxis} * 25px - 50%));"></div>
+    </div>
 </div>
 
 <style>
@@ -22,6 +25,7 @@
         background-color: #FFD700;
         border-radius: 50%;
         border: 5px solid #ccc;
+        margin-right: 20px; /* Add some spacing between joysticks */
     }
     
     .joystick-thumb {
