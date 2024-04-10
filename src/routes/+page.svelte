@@ -132,13 +132,14 @@
 	}
 
      // Sends joystick data to the server
-     async function sendJoystickData() {
-        if (gp) {
-            const left = gp.axes[1];
-            const right = gp.axes[3];
-            ws?.send(JSON.stringify({ left, right }));
-        }
-    }
+		// async function sendJoystickData(l: number, r: number) {
+		// 	if (!gp) return;
+		// 	const left = gp.axes[1];
+		// 	const right = gp.axes[3];
+		// 	const t = [...gp.buttons.slice(4, 8).map((b) => b.pressed)];
+		// 	sendMotionPacket(left, right, [t[0], t[1], t[2], t[3]]);
+		// 	sendMacroPacket(gp.buttons);
+		// }
 
 	onMount(() => {
 		window.addEventListener('gamepadconnected', (e) => {
@@ -165,6 +166,7 @@
 					const t = [...gp.buttons.slice(4, 8).map((b) => b.pressed)];
 					sendMotionPacket(left, right, [t[0], t[1], t[2], t[3]]);
 					sendMacroPacket(gp.buttons);
+					// sendJoystickData(gp.axes[1], gp.axes[3]);
 				}
 			}
 		}, 50);
