@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import Joystick from '../components/Joystick.svelte';
 
 	let ws: WebSocket;
 	let gp: Gamepad | null;
@@ -130,6 +131,15 @@
 		ws?.send(new Int8Array([byte]));
 	}
 
+     // Sends joystick data to the server
+     async function sendJoystickData() {
+        if (gp) {
+            const left = gp.axes[1];
+            const right = gp.axes[3];
+            ws?.send(JSON.stringify({ left, right }));
+        }
+    }
+
 	onMount(() => {
 		window.addEventListener('gamepadconnected', (e) => {
 			const gamepads = navigator.getGamepads();
@@ -174,6 +184,8 @@
 <input bind:value={url} placeholder="Enter address" />
 <button on:click={connect}> Connect </button>
 <button on:click={disconnect}> Disconnect </button>
+<Joystick yAxis={gp?.axes[1] || 0} />
+<Joystick yAxis={gp?.axes[3] || 0} />
 
 <p>{prevString}</p>
 
