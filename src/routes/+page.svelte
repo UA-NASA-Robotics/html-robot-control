@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	// 10.49.28.131:8889/mystream2/
+
 	let ws: WebSocket;
 	let gp: Gamepad | null;
 
@@ -12,6 +14,8 @@
 
 	let previousPacket: [number, number];
 	let prevString: string;
+
+	let iframes: string[] = [];
 
 	// Creates web socket connection with the device with the specified url
 	async function connect() {
@@ -130,6 +134,10 @@
 		ws?.send(new Int8Array([byte]));
 	}
 
+	function addIFrame() {
+		iframes = [...iframes, `http://10.49.28.131:8889/mystream${iframes.length || ''}/`];
+	}
+
 	onMount(() => {
 		window.addEventListener('gamepadconnected', (e) => {
 			const gamepads = navigator.getGamepads();
@@ -170,20 +178,45 @@
 	});
 </script>
 
-<p>{statusText}</p>
-<input bind:value={url} placeholder="Enter address" />
-<button on:click={connect}> Connect </button>
-<button on:click={disconnect}> Disconnect </button>
+<div style="display: flex; flex-direction: row;">
+	<div style="flex: 1; flex-direction: column;">
+		<p>{statusText}</p>
+		<input bind:value={url} placeholder="Enter address" />
+		<button on:click={connect}> Connect </button>
+		<button on:click={disconnect}> Disconnect </button>
 
-<p>{prevString}</p>
+		<p>{prevString}</p>
 
-{#each gp?.axes || [] as axes}
-	<p>{axes}</p>
-{/each}
+		{#if gp}
+			<p>Left Drive: {Math.floor(gp.axes[1] * 100)}</p>
+			<p>Right Drive: {Math.floor(gp.axes[3] * 100)}</p>
 
-{#each gp?.buttons || [] as button, index}
-	<p>{index} {button.pressed} {button.touched} {button.value}</p>
-{/each}
+			{#each gp.buttons as button, index}
+				<p>
+					{index}
+					<span style="color: {button.pressed ? 'green' : 'red'}"
+						>{button.pressed ? 'Pressed' : 'Not Pressed'}</span
+					>
+				</p>
+			{/each}
+		{:else}
+			<p>No gamepad connected :(</p>
+		{/if}
+	</div>
+	<div style="flex: 1; flex-direction: column; height: calc(100vh - 50px);">
+		<button on:click={addIFrame}>+</button>
+		<p></p>
+		{#each iframes as frame, index}
+			<input bind:value={iframes[index]} placeholder="Enter URL" style="width: 100%" />
+			<p></p>
+			<iframe
+				src={frame}
+				title="Frame {index}"
+				style="height: calc(100% / {iframes.length} - 50px); width: 100%"
+			/>
+		{/each}
+	</div>
+</div>
 
 <style>
 </style>
