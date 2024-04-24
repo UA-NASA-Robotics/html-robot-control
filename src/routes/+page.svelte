@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
-	// 10.49.28.131:8889/mystream2/
+	import Joystick from '../components/Joystick.svelte';
 
 	let ws: WebSocket;
 	let gp: Gamepad | null;
@@ -163,6 +162,7 @@
 					const t = [...gp.buttons.slice(4, 8).map((b) => b.pressed)];
 					sendMotionPacket(left, right, [t[0], t[1], t[2], t[3]]);
 					sendMacroPacket(gp.buttons);
+					// sendJoystickData(gp.axes[1], gp.axes[3]);
 				}
 			}
 		}, 50);
@@ -178,16 +178,17 @@
 	});
 </script>
 
+<p>{statusText}</p>
+<input bind:value={url} placeholder="Enter address" />
+<button on:click={connect}> Connect </button>
+<button on:click={disconnect}> Disconnect </button>
 <div style="display: flex; flex-direction: row;">
 	<div style="flex: 1; flex-direction: column;">
-		<p>{statusText}</p>
-		<input bind:value={url} placeholder="Enter address" />
-		<button on:click={connect}> Connect </button>
-		<button on:click={disconnect}> Disconnect </button>
-
 		<p>{prevString}</p>
 
 		{#if gp}
+			<Joystick yAxis={gp?.axes[1] || 0} />
+			<Joystick yAxis={gp?.axes[3] || 0} />
 			<p>Left Drive: {Math.floor(gp.axes[1] * 100)}</p>
 			<p>Right Drive: {Math.floor(gp.axes[3] * 100)}</p>
 
