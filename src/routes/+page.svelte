@@ -134,7 +134,7 @@
 	}
 
 	function addIFrame() {
-		iframes = [...iframes, `http://10.49.28.131:8889/mystream${iframes.length || ''}/`];
+		iframes = [...iframes, `http://10.49.28.131:8889/mystream${iframes.length || ''}`];
 	}
 
 	onMount(() => {
@@ -178,12 +178,12 @@
 	});
 </script>
 
-<p>{statusText}</p>
-<input bind:value={url} placeholder="Enter address" />
-<button on:click={connect}> Connect </button>
-<button on:click={disconnect}> Disconnect </button>
 <div style="display: flex; flex-direction: row;">
 	<div style="flex: 1; flex-direction: column;">
+		<p>{statusText}</p>
+		<input bind:value={url} placeholder="Enter address" />
+		<button on:click={connect}> Connect </button>
+		<button on:click={disconnect}> Disconnect </button>
 		<p>{prevString}</p>
 
 		{#if gp}
@@ -204,6 +204,7 @@
 			<p>No gamepad connected :(</p>
 		{/if}
 	</div>
+
 	<div style="flex: 1; flex-direction: column; height: calc(100vh - 50px);">
 		<button on:click={addIFrame}>+</button>
 		<p></p>
