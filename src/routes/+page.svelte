@@ -137,6 +137,12 @@
 		iframes = [...iframes, `http://10.49.28.131:8889/mystream${iframes.length || ''}`];
 	}
 
+	function removeIFrame(index: number) {
+		let newIFrames = [...iframes];
+		newIFrames.splice(index, 1);
+		iframes = newIFrames;
+	}
+
 	onMount(() => {
 		window.addEventListener('gamepadconnected', (e) => {
 			const gamepads = navigator.getGamepads();
@@ -209,7 +215,8 @@
 		<button on:click={addIFrame}>+</button>
 		<p></p>
 		{#each iframes as frame, index}
-			<input bind:value={iframes[index]} placeholder="Enter URL" style="width: 100%" />
+			<input bind:value={iframes[index]} placeholder="Enter URL" style="width: 70%" />
+			<button on:click={() => removeIFrame(index)}>X</button>
 			<p></p>
 			<iframe
 				src={frame}
