@@ -193,8 +193,10 @@
 		<p>{prevString}</p>
 
 		{#if gp}
-			<Joystick yAxis={gp?.axes[1] || 0} />
-			<Joystick yAxis={gp?.axes[3] || 0} />
+			<div style="display: flex; flex-direction: row">
+				<Joystick yAxis={gp?.axes[1] || 0} />
+				<Joystick yAxis={gp?.axes[3] || 0} />
+			</div>
 			<p>Left Drive: {Math.floor(gp.axes[1] * 100)}</p>
 			<p>Right Drive: {Math.floor(gp.axes[3] * 100)}</p>
 
